@@ -5,7 +5,7 @@ class BookComponent extends Component {
   
   render () {
 
-    const { book } = this.props;
+    const { book, onShelfChange } = this.props;
 
     return (
         <div className="book">
@@ -16,7 +16,7 @@ class BookComponent extends Component {
               backgroundImage: `url("${book.image}")` }}>
             </div>
             <div className="book-shelf-changer">
-              <select>
+              <select value={book.shelf} onChange={(e) => onShelfChange(e.target.selectedIndex - 1, book.id)}>
                 <option value="move" disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
                 <option value="wantToRead">Want to Read</option>
@@ -33,7 +33,8 @@ class BookComponent extends Component {
 }
 
 BookComponent.propTypes = {
-  book: PropTypes.object
+  book: PropTypes.object,
+  onShelfChange: PropTypes.func
 }
 
 export default BookComponent;
