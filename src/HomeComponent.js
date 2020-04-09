@@ -1,53 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import BookShelfComponent from './BookShelfComponent';
-import * as BooksAPI from './BooksAPI';
+import PropTypes from 'prop-types';
 
 class HomeComponent extends Component {
-  state = {
-    books: [],
-    shelves: ['currentlyReading', 'wantToRead', 'read']
-  }
-
-  componentDidMount() {
-    BooksAPI.getAll()
-      .then(books => books.map(book => {
-        const b = {
-          id: book.id,
-          title: book.title,
-          author: book.authors[0],
-          shelf: book.shelf,
-          image: book.imageLinks.thumbnail
-        }
-
-        return b;
-      }))
-      .then(books => this.setState({ books: books}));
-  }
-
-  updateShelf = (shelfIndex, bookId) => {
-    BooksAPI.update({id: bookId}, this.state.shelves[shelfIndex])
-      .then(res => {
-        this.setState((currentState) => {
-          const updatedBooks = currentState.books;
-
-          for (const key in updatedBooks) {
-            const book = updatedBooks[key];
-            if (res.currentlyReading.includes(book.id)) {
-              book.shelf = currentState.shelves[0];
-            } else if (res.wantToRead.includes(book.id)) {
-              book.shelf = currentState.shelves[1];
-            } else if (res.read.includes(book.id)) {
-              book.shelf = currentState.shelves[2];
-            }
-          }
-
-          return updatedBooks;
-        });
-      });
-  }
 
   render() {
+
+    const { shelves, books, onUpdateShelf } = this.props;
+
     return (
       <div className="list-books">
         <div className="list-books-title">
@@ -56,12 +17,12 @@ class HomeComponent extends Component {
         <div className="list-books-content">
           <div>
             {
-              this.state.shelves.map((shelf) => (
+              shelves.map((shelf) => (
                 <BookShelfComponent
                   key={shelf}
                   title={shelf} 
-                  books={this.state.books.filter(book => book.shelf === shelf)}
-                  onShelfChange={this.updateShelf} />
+                  books={books.filter(book => book.shelf === shelf)}
+                  onShelfChange={onUpdateShelf} />
               ))
             }
         </div>
@@ -72,6 +33,12 @@ class HomeComponent extends Component {
     </div>
     )
   }
+}
+
+HomeComponent.propTypes = {
+  shelves: PropTypes.array,
+  books: PropTypes.array,
+  onUpdateShelf: PropTypes.func
 }
 
 export default HomeComponent;
