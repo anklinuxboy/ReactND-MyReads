@@ -99,7 +99,7 @@ class SearchComponent extends Component {
       <div className="search-books-results">
         <ol className="books-grid">
           {
-            this.state.books.map(book =>
+            this.state.query !== '' && this.state.books.map(book =>
               <li key={book.id}>
                 <BookComponent book={book} onShelfChange={this.onUpdateShelf} />
               </li>
