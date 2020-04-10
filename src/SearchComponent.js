@@ -10,6 +10,28 @@ class SearchComponent extends Component {
     books: []
   }
 
+  onUpdateShelf = (shelfIndex, bookId) => {
+    let shelf = 'none';
+    if (shelfIndex <= 2) {
+      shelf = this.props.shelves[shelfIndex];
+    }
+    BooksAPI.update({id: bookId}, shelf)
+      .then(res => {
+        this.setState((currentState) => {
+          const updatedBooks = currentState.books;
+          
+          updatedBooks.forEach(book => {
+            if (book.id === bookId) {
+              book.shelf = shelf;
+            }
+          })
+          
+          return updatedBooks;
+        });
+      })
+      .catch(error => this.setState( { books: [] }));
+  };
+
   onChange = (text) => {
     this.setState({ query: text })
 
@@ -48,17 +70,15 @@ class SearchComponent extends Component {
     } else {
       this.setState({ books: [] });
     }
-  }
+  };
 
   render() {
-
-    const { onUpdateShelf } = this.props;
 
     return (
       <div className="search-books">
       <div className="search-books-bar">
         <Link to='/'>
-        <button className="close-search">Close</button>
+        <button onClick={this.props.onBackClick} className="close-search">Close</button>
         </Link>
         <div className="search-books-input-wrapper">
           {/*
@@ -81,7 +101,7 @@ class SearchComponent extends Component {
           {
             this.state.books.map(book =>
               <li key={book.id}>
-                <BookComponent book={book} onShelfChange={onUpdateShelf} />
+                <BookComponent book={book} onShelfChange={this.onUpdateShelf} />
               </li>
               )
           }
@@ -93,8 +113,9 @@ class SearchComponent extends Component {
 }
 
 SearchComponent.propTypes = {
+  shelves: PropTypes.array,
   books: PropTypes.array,
-  onUpdateShelf: PropTypes.func
+  onBackClick: PropTypes.func
 }
 
 export default SearchComponent;
