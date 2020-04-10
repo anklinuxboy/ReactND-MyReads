@@ -20,7 +20,7 @@ class HomeComponent extends Component {
               shelves.map((shelf) => (
                 <BookShelfComponent
                   key={shelf}
-                  title={shelf} 
+                  title={shelf.replace(/([a-z])([A-Z])/g, '$1 $2').toUpperCase()} 
                   books={books.filter(book => book.shelf === shelf)}
                   onShelfChange={onUpdateShelf} />
               ))
